@@ -3,598 +3,277 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Business Verification Report</title>
-<!--
-  FAVICON: place the Jobberman JB favicon file next to this HTML file,
-  named "favicon.ico" (or edit the href below to match your file,
-  e.g. "favicon.png"). This page uses the favicon file directly.
--->
+<title>Organization Verification For</title>
 <link rel="icon" href="favicon.ico">
 <style>
   :root{
-    --ink:#14231d;
-    --paper:#f6f4ee;
-    --card:#ffffff;
-    --line:#dedad0;
-    --accent:#0b5fff;
-    --accent-dark:#0a3ea3;
-    --warn:#b8562f;
-    --ok:#0b5fff;
-    --muted:#6b675e;
-    --radius:12px;
+    --ink:#14231d; --paper:#f6f4ee; --card:#ffffff; --line:#dedad0;
+    --accent:#0b5fff; --accent-dark:#0a3ea3; --warn:#b8562f;
+    --ok:#2e7d32; --muted:#6b675e; --radius:12px;
+    --shadow:0 4px 20px rgba(0,0,0,0.08); --shadow-lg:0 8px 30px rgba(0,0,0,0.12);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--paper);
-    color:var(--ink);
-    -webkit-text-size-adjust:100%;
-  }
+  body{margin:0; background:var(--paper); color:var(--ink); -webkit-text-size-adjust:100%;}
+  
   header{
-    background:var(--accent-dark);
-    color:#fff;
-    padding:18px 20px 22px;
-    position:sticky;
-    top:0;
-    z-index:10;
+    background:linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+    color:#fff; padding:20px; position:sticky; top:0; z-index:10;
+    box-shadow:var(--shadow-lg);
   }
-  header h1{
-    margin:0;
-    font-size:1.15rem;
-    font-weight:700;
-    letter-spacing:0.2px;
-  }
-  header p{
-    margin:4px 0 0;
-    font-size:0.82rem;
-    opacity:0.85;
-  }
-  header p a.page-link{
-    color:#fff;
-    text-decoration:underline;
-    opacity:0.85;
-  }
-  .header-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-  }
+  .header-top{display:flex; align-items:center; justify-content:space-between; gap:15px;}
   .header-top img{
-    height:48px;
-    width:auto;
-    display:block;
-    background:#fff;
-    border-radius:10px;
-    padding:6px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.12);
+    height:56px; width:auto; display:block; background:#fff; border-radius:12px;
+    padding:8px; box-shadow:0 4px 15px rgba(0,0,0,0.2); transition:transform 0.3s ease;
   }
-  .brand-copy{
-    flex:1;
-    text-align:center;
-    min-width:0;
+  .header-top img:hover{transform:translateY(-2px);}
+  .brand-copy{flex:1; text-align:center; min-width:0;}
+  .brand-copy h1{margin:0; font-size:1.25rem; font-weight:700; letter-spacing:0.3px;}
+  .brand-copy p{margin:6px 0 0; font-size:0.85rem; opacity:0.9;}
+  
+  .login-overlay{
+    position:fixed; inset:0; background:linear-gradient(135deg, rgba(10,62,163,0.95), rgba(11,95,255,0.95));
+    display:flex; align-items:center; justify-content:center; padding:20px; z-index:1000;
+    backdrop-filter:blur(10px);
   }
-  .status-banner{
-    padding:12px 16px;
-    font-size:0.92rem;
-    text-align:center;
-    border-bottom:1px solid #b5defd;
-    background:#e8f4ff;
-    color:#0c4c7d;
+  .login-overlay.hidden{display:none;}
+  .login-card{
+    background:#fff; border-radius:20px; padding:40px; max-width:450px; width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:slideUp 0.4s ease;
   }
-  .status-banner.offline{
-    background:#fff1f0;
-    border-color:#f5c6c6;
-    color:#8f1e13;
+  @keyframes slideUp{from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);}}
+  .login-header{text-align:center; margin-bottom:30px;}
+  .login-header h2{margin:0 0 8px; color:var(--accent-dark); font-size:1.8rem; font-weight:700;}
+  .login-header p{margin:0; color:var(--muted); font-size:0.95rem;}
+  .login-logos{display:flex; justify-content:center; gap:20px; margin-bottom:25px;}
+  .login-logos img{height:60px; width:auto; background:#fff; border-radius:12px; padding:10px; box-shadow:var(--shadow);}
+  .form-group{margin-bottom:20px;}
+  .form-group label{display:block; font-size:0.9rem; font-weight:600; color:var(--ink); margin-bottom:8px;}
+  .form-group input{
+    width:100%; padding:14px 16px; border:2px solid var(--line); border-radius:10px;
+    font-size:16px; transition:border-color 0.3s, box-shadow 0.3s; font-family:inherit;
   }
-  .photo-slot.add-slot{
-    border-style:dashed;
-    background:#fff;
+  .form-group input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px rgba(11,95,255,0.1);}
+  .login-btn{
+    width:100%; padding:16px; background:var(--accent); color:#fff; border:none; border-radius:10px;
+    font-size:1.05rem; font-weight:700; cursor:pointer; transition:all 0.3s; margin-top:10px;
   }
-  .photo-slot.add-slot .plus-icon{
-    width:42px;
-    height:42px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    border:2px solid var(--accent);
-    color:var(--accent);
-    font-size:1.6rem;
-    font-weight:700;
-    background:rgba(11,95,255,0.08);
+  .login-btn:hover{background:var(--accent-dark); transform:translateY(-2px);}
+  .login-btn:disabled{background:#ccc; cursor:not-allowed; transform:none;}
+  .error-msg{
+    background:#ffebee; color:#c62828; padding:12px; border-radius:8px; font-size:0.9rem;
+    margin-top:15px; display:none; border-left:4px solid #c62828;
   }
-  .photo-slot.add-slot .add-label{
-    display:block;
-    margin-top:10px;
-    font-size:0.95rem;
-    font-weight:700;
-    color:var(--ink);
+  .error-msg.show{display:block; animation:shake 0.5s;}
+  @keyframes shake{0%,100%{transform:translateX(0);} 25%{transform:translateX(-10px);} 75%{transform:translateX(10px);}}
+  
+  .confirm-overlay{
+    position:fixed; inset:0; background:rgba(20,35,29,0.7); display:none;
+    align-items:center; justify-content:center; padding:20px; z-index:1001; backdrop-filter:blur(5px);
   }
-  .cam-icon{
-    width:42px;
-    height:32px;
-    position:relative;
-    display:inline-block;
+  .confirm-overlay.show{display:flex; animation:fadeIn 0.3s;}
+  @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+  .confirm-card{background:#fff; border-radius:16px; padding:35px; max-width:420px; width:100%; box-shadow:var(--shadow-lg);}
+  .confirm-card h3{margin:0 0 20px; color:var(--accent-dark); font-size:1.4rem; display:flex; align-items:center; gap:10px;}
+  .confirm-card h3::before{
+    content:'✓'; background:var(--ok); color:#fff; width:32px; height:32px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:1.2rem;
   }
-  .cam-icon::before{
-    content:'';
-    position:absolute;
-    inset:0;
-    border:2px solid var(--accent);
-    border-radius:8px;
+  .confirm-info{background:#f5f9ff; border-radius:12px; padding:20px; margin-bottom:25px; border:2px solid #e3f2fd;}
+  .confirm-row{display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #e3f2fd;}
+  .confirm-row:last-child{border-bottom:none;}
+  .confirm-label{color:var(--muted); font-weight:500;}
+  .confirm-value{font-weight:700; color:var(--ink);}
+  .confirm-actions{display:flex; gap:12px;}
+  .confirm-actions button{
+    flex:1; padding:14px; border-radius:10px; font-weight:700; cursor:pointer;
+    transition:all 0.3s; border:none; font-size:0.95rem;
   }
-  .cam-icon::after{
-    content:'';
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:12px;
-    height:12px;
-    transform:translate(-50%, -50%);
-    border-radius:50%;
-    background:var(--accent);
-  }
-  .photo-thumb{
-    position:relative;
-    border:1px solid var(--line);
-    border-radius:10px;
-    overflow:hidden;
-    background:#fff;
-  }
-  .photo-thumb img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
-  .remove-photo{
-    position:absolute;
-    top:8px;
-    right:8px;
-    width:30px;
-    height:30px;
-    border:none;
-    border-radius:50%;
-    background:rgba(0,0,0,0.65);
-    color:#fff;
-    font-weight:700;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .submit:disabled{
-    background:#8ea8ff;
-    cursor:not-allowed;
-  }
-  .remove-photo:focus-visible,
-  .submit:focus-visible,
-  .status-toggle label:focus-visible,
-  .photo-slot input:focus-visible{
-    outline:3px solid #1f6feb;
-    outline-offset:2px;
-  }
-  .submit{
-    transition:transform 0.2s ease, background 0.2s ease;
-  }
-  .submit:active{
-    transform:scale(0.99);
-  }
-  .photo-thumb .badge{
-    position:absolute;
-    bottom:8px;
-    left:8px;
-    background:rgba(255,255,255,0.95);
-    color:var(--ink);
-    padding:4px 8px;
-    border-radius:8px;
-    font-size:0.72rem;
-  }
-  .brand-copy h1{
-    margin:0;
-    font-size:1.15rem;
-    font-weight:700;
-    letter-spacing:0.2px;
-  }
-  .brand-copy p{
-    margin:4px 0 0;
-    font-size:0.82rem;
-    opacity:0.85;
-  }
-  .header-top img:not([src]), .header-top img[src=""]{
-    display:none;
-  }
-  main{
-    max-width:520px;
-    margin:0 auto;
-    padding:18px 16px 0;
-  }
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:16px;
-    margin-bottom:14px;
-    break-inside:avoid;        /* don't split a card across desktop columns */
-  }
-  .card h2{
-    font-size:0.72rem;
-    text-transform:uppercase;
-    letter-spacing:0.08em;
-    color:var(--accent);
-    margin:0 0 12px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-  }
-  .card h2 .n{
-    background:var(--accent);
-    color:#fff;
-    width:18px;height:18px;
-    border-radius:50%;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    font-size:0.68rem;
-  }
-  label{
-    display:block;
-    font-size:0.82rem;
-    font-weight:600;
-    margin:12px 0 5px;
-  }
+  .btn-cancel{background:#f5f5f5; color:var(--ink);}
+  .btn-cancel:hover{background:#e0e0e0;}
+  .btn-confirm{background:var(--accent); color:#fff;}
+  .btn-confirm:hover{background:var(--accent-dark); transform:translateY(-2px);}
+  
+  .status-banner{padding:12px 16px; font-size:0.92rem; text-align:center; border-bottom:1px solid #b5defd; background:#e8f4ff; color:#0c4c7d;}
+  .status-banner.offline{background:#fff1f0; border-color:#f5c6c6; color:#8f1e13;}
+  
+  main{max-width:520px; margin:0 auto; padding:18px 16px 0;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px; break-inside:avoid; box-shadow:var(--shadow);}
+  .card h2{font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); margin:0 0 12px; display:flex; align-items:center; gap:6px;}
+  .card h2 .n{background:var(--accent); color:#fff; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.68rem; font-weight:700;}
+  label{display:block; font-size:0.82rem; font-weight:600; margin:12px 0 5px;}
   label:first-of-type{margin-top:0;}
   .req{color:var(--warn);}
   input[type=text], input[type=tel], input[type=date], select, textarea{
-    width:100%;
-    padding:11px 12px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    font-size:16px;            /* 16px min avoids iOS zoom-on-focus */
-    line-height:1.3;
-    background:#fff;
-    color:var(--ink);
-    font-family:inherit;
-    -webkit-appearance:none;
-    appearance:none;
+    width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:8px; font-size:16px;
+    line-height:1.3; background:#fff; color:var(--ink); font-family:inherit; -webkit-appearance:none; appearance:none; transition:border-color 0.3s;
   }
-  input[type=date]{
-    min-height:44px;           /* keeps native date control tap-friendly */
-  }
-  input:focus, select:focus, textarea:focus{
-    outline:2px solid var(--accent);
-    outline-offset:1px;
-  }
+  input:focus, select:focus, textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(11,95,255,0.1);}
   textarea{resize:vertical; min-height:80px;}
   .hint{font-size:0.72rem; color:var(--muted); margin-top:4px;}
   .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-
-  .readonly-field{
-    padding:11px 12px;
-    border-radius:8px;
-    background:#f0ede4;
-    border:1px dashed var(--line);
-    font-size:0.9rem;
-    color:var(--muted);
-  }
-
-  .photo-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
-    gap:10px;
-    margin-top:10px;
-  }
+  
+  .photo-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin-top:10px;}
   .photo-slot{
-    aspect-ratio:1/1;
-    border:1.5px dashed var(--line);
-    border-radius:10px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    color:var(--muted);
-    font-size:0.68rem;
-    position:relative;
-    overflow:hidden;
-    background:#faf9f5;
-    cursor:pointer;
+    aspect-ratio:1/1; border:1.5px dashed var(--line); border-radius:10px; display:flex;
+    flex-direction:column; align-items:center; justify-content:center; gap:4px; color:var(--muted);
+    font-size:0.68rem; position:relative; overflow:hidden; background:#faf9f5; cursor:pointer; transition:all 0.3s;
   }
-  .photo-slot.add-slot{
-    border-style:dashed;
-    background:#fff;
-  }
-  .photo-slot.add-slot .plus-icon{
-    font-size:2.4rem;
-    color:var(--accent);
-  }
-  .photo-slot.add-slot .add-label{
-    font-size:0.9rem;
-    font-weight:700;
-  }
-  .photo-thumb{
-    position:relative;
-    border:1px solid var(--line);
-    border-radius:10px;
-    overflow:hidden;
-    background:#fff;
-  }
-  .photo-thumb img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
+  .photo-slot:hover{border-color:var(--accent); background:#f0f7ff;}
+  .photo-slot.add-slot{border-style:dashed; background:#fff;}
+  .photo-slot.add-slot .plus-icon{font-size:2.4rem; color:var(--accent); font-weight:300;}
+  .photo-slot.add-slot .add-label{font-size:0.9rem; font-weight:700;}
+  .photo-thumb{position:relative; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; box-shadow:var(--shadow);}
+  .photo-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
   .remove-photo{
-    position:absolute;
-    top:6px;
-    right:6px;
-    width:24px;
-    height:24px;
-    border:none;
-    border-radius:50%;
-    background:rgba(0,0,0,0.55);
-    color:#fff;
-    font-weight:700;
-    cursor:pointer;
+    position:absolute; top:6px; right:6px; width:28px; height:28px; border:none; border-radius:50%;
+    background:rgba(0,0,0,0.65); color:#fff; font-weight:700; cursor:pointer; display:flex;
+    align-items:center; justify-content:center; transition:background 0.3s;
   }
-  .photo-thumb .badge{
-    position:absolute;
-    bottom:6px;
-    left:6px;
-    background:rgba(255,255,255,0.92);
-    color:var(--ink);
-    padding:4px 7px;
-    border-radius:8px;
-    font-size:0.68rem;
-  }
-  .photo-note{
-    grid-column:1/-1;
-    padding:12px 14px;
-    border:1px solid var(--line);
-    border-radius:10px;
-    background:#f5f5f0;
-    text-align:center;
-    color:var(--muted);
-  }
-  .photo-slot.missing{
-    border-color:var(--warn);
-    background:#fbece5;
-    color:var(--warn);
-  }
-  .photo-slot input{
-    position:absolute;
-    inset:0;
-    opacity:0;
-    cursor:pointer;
-  }
-  .photo-slot img{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-  }
-  .photo-slot .badge{
-    position:absolute;
-    top:4px;
-    left:4px;
-    background:var(--accent-dark);
-    color:#fff;
-    font-size:0.6rem;
-    padding:2px 5px;
-    border-radius:4px;
-    z-index:2;
-  }
-  .photo-slot .check{
-    position:absolute;
-    top:4px;
-    right:4px;
-    background:var(--ok);
-    color:#fff;
-    width:16px;height:16px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:0.6rem;
-    z-index:2;
-  }
-  .cam-icon{font-size:1.3rem;}
-
-  .status-toggle{
-    display:flex;
-    gap:8px;
-    margin-top:6px;
-  }
+  .remove-photo:hover{background:rgba(184,86,47,0.9);}
+  .photo-thumb .badge{position:absolute; bottom:6px; left:6px; background:rgba(255,255,255,0.95); color:var(--ink); padding:4px 8px; border-radius:8px; font-size:0.7rem; font-weight:600;}
+  .photo-note{grid-column:1/-1; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:#f5f5f0; text-align:center; color:var(--muted);}
+  
+  .status-toggle{display:flex; gap:8px; margin-top:6px;}
   .status-toggle input{display:none;}
   .status-toggle label{
-    flex:1;
-    text-align:center;
-    padding:11px 8px;
-    border-radius:8px;
-    border:1.5px solid var(--line);
-    font-size:0.85rem;
-    font-weight:600;
-    margin:0;
-    color:var(--muted);
-    cursor:pointer;
+    flex:1; text-align:center; padding:12px 8px; border-radius:8px; border:2px solid var(--line);
+    font-size:0.85rem; font-weight:600; margin:0; color:var(--muted); cursor:pointer; transition:all 0.3s;
   }
-  .status-toggle input:checked + label{
-    border-color:var(--ok);
-    background:#e7f0ff;
-    color:var(--accent-dark);
-  }
-  .status-toggle input#statusNot:checked + label{
-    border-color:var(--warn);
-    background:#fbece5;
-    color:var(--warn);
-  }
-
+  .status-toggle input:checked + label{border-color:var(--ok); background:#e8f5e9; color:var(--ok);}
+  .status-toggle input#statusNot:checked + label{border-color:var(--warn); background:#ffebee; color:var(--warn);}
+  
   .submit-bar{
-    position:sticky;
-    bottom:0;
-    margin:8px -16px 0;        /* bleed to the edges of <main>'s padding */
-    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
-    background:rgba(246,244,238,0.92);
-    backdrop-filter:blur(6px);
-    -webkit-backdrop-filter:blur(6px);
-    border-top:1px solid var(--line);
-    z-index:9;
+    position:sticky; bottom:0; margin:8px -16px 0; padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    background:rgba(246,244,238,0.95); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-top:1px solid var(--line); z-index:9;
   }
   button.submit{
-    width:100%;
-    background:var(--accent);
-    color:#fff;
-    border:none;
-    padding:15px;
-    border-radius:10px;
-    font-size:1rem;
-    font-weight:700;
-    letter-spacing:0.2px;
+    width:100%; background:var(--accent); color:#fff; border:none; padding:16px; border-radius:10px;
+    font-size:1.05rem; font-weight:700; letter-spacing:0.3px; cursor:pointer; transition:all 0.3s; box-shadow:var(--shadow);
   }
-  button.submit:active{background:var(--accent-dark);}
-  .note{
-    text-align:center;
-    font-size:0.72rem;
-    color:var(--muted);
-    margin:10px 0 0;
-  }
-
-  /* success overlay */
-  .overlay{
-    position:fixed; inset:0;
-    background:rgba(20,35,29,0.55);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    z-index:100;
-  }
+  button.submit:hover{background:var(--accent-dark); transform:translateY(-2px); box-shadow:var(--shadow-lg);}
+  button.submit:active{transform:translateY(0);}
+  button.submit:disabled{background:#ccc; cursor:not-allowed; transform:none;}
+  .note{text-align:center; font-size:0.72rem; color:var(--muted); margin:10px 0 0;}
+  
+  .overlay{position:fixed; inset:0; background:rgba(20,35,29,0.6); display:none; align-items:center; justify-content:center; padding:20px; z-index:100; backdrop-filter:blur(5px);}
   .overlay.show{display:flex;}
-  .sheet{
-    background:#fff;
-    border-radius:16px;
-    max-width:440px;
-    width:100%;
-    max-height:85vh;
-    overflow-y:auto;
-    padding:20px;
-  }
-  .sheet h3{margin:0 0 4px; font-size:1.05rem;}
-  .sheet .sub{color:var(--muted); font-size:0.82rem; margin-bottom:14px;}
-  .kv{
-    display:grid;
-    grid-template-columns:auto 1fr;
-    gap:6px 12px;
-    font-size:0.82rem;
-    margin-bottom:14px;
-  }
-  .kv div:nth-child(odd){color:var(--muted);}
+  .sheet{background:#fff; border-radius:16px; max-width:440px; width:100%; max-height:85vh; overflow-y:auto; padding:25px; box-shadow:var(--shadow-lg);}
+  .sheet h3{margin:0 0 6px; font-size:1.2rem; color:var(--accent-dark);}
+  .sheet .sub{color:var(--muted); font-size:0.85rem; margin-bottom:18px;}
+  .kv{display:grid; grid-template-columns:auto 1fr; gap:8px 16px; font-size:0.85rem; margin-bottom:18px;}
+  .kv div:nth-child(odd){color:var(--muted); font-weight:500;}
   .kv div:nth-child(even){font-weight:600; word-break:break-word;}
-  .sheet button{
-    width:100%;
-    padding:12px;
-    border-radius:8px;
-    border:none;
-    background:var(--accent);
-    color:#fff;
-    font-weight:700;
-    font-size:0.92rem;
-  }
-  .proto-flag{
-    background:#fff4e0;
-    border:1px solid #edcf98;
-    color:#7a5314;
-    font-size:0.74rem;
-    border-radius:8px;
-    padding:8px 10px;
-    margin-bottom:14px;
-    line-height:1.4;
-  }
-
-  /* ---- Tablet / desktop: flow the cards into two balanced columns ---- */
+  .sheet button{width:100%; padding:14px; border-radius:10px; border:none; background:var(--accent); color:#fff; font-weight:700; font-size:0.95rem; cursor:pointer; transition:background 0.3s;}
+  .sheet button:hover{background:var(--accent-dark);}
+  
+  .spinner{display:inline-block; width:20px; height:20px; border:3px solid rgba(255,255,255,0.3); border-radius:50%; border-top-color:#fff; animation:spin 1s ease-in-out infinite; margin-right:8px; vertical-align:middle;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  
   @media (min-width:760px){
-    header{ padding:20px 24px 24px; }
-    header h1{ font-size:1.3rem; }
-    main{
-      max-width:860px;
-      padding:22px 20px 0;
-    }
-    #vform{
-      column-count:2;
-      column-gap:18px;
-    }
-    .submit-bar{
-      margin:12px -20px 0;
-      padding:14px 20px calc(14px + env(safe-area-inset-bottom));
-    }
-    button.submit{
-      max-width:320px;
-      margin:0 auto;
-      display:block;
-    }
+    header{padding:24px 30px 28px;}
+    header h1{font-size:1.4rem;}
+    .header-top img{height:64px;}
+    main{max-width:860px; padding:22px 20px 0;}
+    #vform{column-count:2; column-gap:18px;}
+    .submit-bar{margin:12px -20px 0; padding:14px 20px calc(14px + env(safe-area-inset-bottom));}
+    button.submit{max-width:320px; margin:0 auto; display:block;}
   }
-
-  /* Respect users who prefer no motion (e.g. the submit scroll-into-view) */
-  @media (prefers-reduced-motion:reduce){
-    *{ scroll-behavior:auto; }
-  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}}
 </style>
 </head>
 <body>
 
+<!-- Login Overlay -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logos">
+      <img src="jobberman.png" alt="Jobberman" onerror="this.style.display='none'">
+      <img src="logo.png" alt="Mastercard Foundation" onerror="this.style.display='none'">
+    </div>
+    <div class="login-header">
+      <h2>Organization Verification</h2>
+      <p>Field data collection — Ghana</p>
+    </div>
+    <div class="form-group">
+      <label for="enumeratorId">Enumerator ID</label>
+      <input type="text" id="enumeratorId" placeholder="Enter your ID" autocomplete="off">
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="verifyEnumerator()">Continue</button>
+    <div class="error-msg" id="loginError"></div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-card">
+    <h3>Confirm Your Details</h3>
+    <div class="confirm-info">
+      <div class="confirm-row">
+        <span class="confirm-label">Enumerator ID:</span>
+        <span class="confirm-value" id="confirmId"></span>
+      </div>
+      <div class="confirm-row">
+        <span class="confirm-label">Name:</span>
+        <span class="confirm-value" id="confirmName"></span>
+      </div>
+      <div class="confirm-row">
+        <span class="confirm-label">Assigned Region:</span>
+        <span class="confirm-value" id="confirmRegion"></span>
+      </div>
+    </div>
+    <div class="confirm-actions">
+      <button class="btn-cancel" onclick="cancelLogin()">Change ID</button>
+      <button class="btn-confirm" onclick="confirmLogin()">Confirm & Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main Header -->
 <header>
   <div class="header-top">
     <img src="jobberman.png" alt="Jobberman JB logo" onerror="this.style.display='none'">
     <div class="brand-copy">
-      <h1>Business Verification Report</h1>
+      <h1>Organization Verification For</h1>
       <p>Field data collection — Ghana</p>
     </div>
     <img src="logo.png" alt="Mastercard Foundation logo" onerror="this.style.display='none'">
   </div>
 </header>
+
 <div class="status-banner online" id="statusBanner" role="status" aria-live="polite">Online — your draft is auto-saved locally.</div>
+
 <main>
-
   <form id="vform">
-
     <div class="card">
       <h2><span class="n">1</span>Business Owner</h2>
-
       <label for="ownerName">Business Owner Name <span class="req">*</span></label>
       <input type="text" id="ownerName" name="ownerName" autocomplete="name" required placeholder="e.g. Ama Boateng">
-
       <label for="phone">Phone Number</label>
       <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="e.g. 024 123 4567">
     </div>
 
     <div class="card">
       <h2><span class="n">2</span>Business Details</h2>
-
       <label for="businessName">Business Name <span class="req">*</span></label>
       <input type="text" id="businessName" name="businessName" autocomplete="organization" required placeholder="e.g. Ama's Provisions Store">
-
       <label for="businessType">Business Type <span class="req">*</span></label>
       <input type="text" id="businessType" name="businessType" autocomplete="organization" required placeholder="e.g. Retail / Trading / Food vendor">
-
+      <label for="location">Location <span class="req">*</span></label>
+      <input type="text" id="location" name="location" required placeholder="e.g. Near Market Circle">
+      <label for="landmark">Landmark <span class="req">*</span></label>
+      <input type="text" id="landmark" name="landmark" required placeholder="e.g. Opposite GT Bank">
       <label for="streetName">Street Name <span class="req">*</span></label>
       <input type="text" id="streetName" name="streetName" autocomplete="street-address" required placeholder="e.g. Spintex Road">
-
       <div class="row2">
         <div>
           <label for="region">Region <span class="req">*</span></label>
-          <select id="region" name="region" required>
-            <option value="" disabled selected>Select region</option>
-          </select>
+          <select id="region" name="region" required><option value="" disabled selected>Select region</option></select>
         </div>
         <div>
           <label for="district">District <span class="req">*</span></label>
-          <select id="district" name="district" required disabled>
-            <option value="" disabled selected>Select region first</option>
-          </select>
+          <select id="district" name="district" required disabled><option value="" disabled selected>Select region first</option></select>
         </div>
       </div>
     </div>
@@ -607,7 +286,6 @@
 
     <div class="card">
       <h2><span class="n">4</span>Verification</h2>
-
       <label>Verification Status <span class="req">*</span></label>
       <div class="status-toggle">
         <input type="radio" name="status" id="statusDone" value="Completed" checked>
@@ -615,21 +293,17 @@
         <input type="radio" name="status" id="statusNot" value="Not completed">
         <label for="statusNot">Not completed</label>
       </div>
-
       <label for="observations">Detailed Observations</label>
       <textarea id="observations" name="observations" placeholder="Staff strength observed, security, conduciveness of the premises…"></textarea>
     </div>
 
     <div class="card">
       <h2><span class="n">5</span>Dates</h2>
-
       <label for="requestedDate">Requested Date <span class="req">*</span></label>
       <input type="date" id="requestedDate" name="requestedDate" required>
-
       <label for="completedDate">Completed Date <span class="req">*</span></label>
       <input type="date" id="completedDate" name="completedDate" required>
     </div>
-
   </form>
 
   <div class="submit-bar">
@@ -649,15 +323,11 @@
 
 <script>
 if('serviceWorker' in navigator){
-  window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  });
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 }
 
-// ⚠️ SET THIS after deploying code.gs as a Web App (see README.md).
-const CONFIG = {
-  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbymz-dPf0buXedR7sXCXXA80MV25ycHhWn_cBES-oMXwSHfMlxOGB1qXo9q77RL1DUp/exec"
-};
+// ️ PASTE YOUR DEPLOYED APPS SCRIPT WEB APP URL HERE
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymz-dPf0buXedR7sXCXXA80MV25ycHhWn_cBES-oMXwSHfMlxOGB1qXo9q77RL1DUp/exec";
 
 const GHANA_REGIONS_DISTRICTS = {
   "Ahafo": ["Asunafo North","Asunafo South","Asutifi North","Asutifi South","Tano North","Tano South"],
@@ -678,60 +348,134 @@ const GHANA_REGIONS_DISTRICTS = {
   "Western North": ["Aowin","Bia East","Bia West","Bibiani Anhwiaso Bekwai","Bodi","Juaboso","Sefwi Akontombra","Sefwi-Wiawso","Suaman"]
 };
 
-const regionSelect = document.getElementById('region');
-const districtSelect = document.getElementById('district');
-
-Object.keys(GHANA_REGIONS_DISTRICTS).forEach(r=>{
-  const opt = document.createElement('option');
-  opt.value = r; opt.textContent = r;
-  regionSelect.appendChild(opt);
-});
-
-regionSelect.addEventListener('change', ()=>{
-  const districts = GHANA_REGIONS_DISTRICTS[regionSelect.value] || [];
-  districtSelect.innerHTML = '';
-  const placeholder = document.createElement('option');
-  placeholder.value = ''; placeholder.disabled = true; placeholder.selected = true;
-  placeholder.textContent = districts.length ? 'Select district' : 'Select region first';
-  districtSelect.appendChild(placeholder);
-  districts.forEach(d=>{
-    const opt = document.createElement('option');
-    opt.value = d; opt.textContent = d;
-    districtSelect.appendChild(opt);
-  });
-  districtSelect.disabled = districts.length === 0;
-});
-
-// --- Geolocation (silent — no UI shown to the collector) ---
-// Captured in the background on load and refreshed right before submit,
-// so the payload always carries the freshest fix without the collector
-// seeing or interacting with any location UI.
+let currentEnumerator = null;
+let volunteerData = [];
 let lastPosition = null;
-let geoErrorNote = null;
-
-function captureLocation(){
-  if(!navigator.geolocation){
-    geoErrorNote = 'Geolocation not supported on this device';
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(
-    pos=>{ lastPosition = pos; geoErrorNote = null; },
-    err=>{ geoErrorNote = err.message || 'permission denied'; },
-    { enableHighAccuracy:true, timeout:12000, maximumAge:0 }
-  );
-}
-captureLocation();
-
 const DRAFT_KEY = 'orgVerifyDraft';
 const photoGrid = document.getElementById('photoGrid');
 let photoData = [];
 
-function getDraft(){
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadVolunteerData();
+  setupRegionDistricts();
+  loadDraft();
+  renderPhotos();
+  registerDraftListeners();
+  updateOnlineStatus();
+  captureLocation();
+});
+
+async function loadVolunteerData() {
   try {
-    return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
-  } catch (err) {
-    return null;
+    const response = await fetch(SCRIPT_URL + '?action=getVolunteers');
+    const data = await response.json();
+    if (data.volunteers) {
+      volunteerData = data.volunteers;
+    } else if (data.error) {
+      showError('Unable to load enumerator data: ' + data.error);
+    }
+  } catch (error) {
+    showError('Unable to load enumerator data. Please check your connection.');
   }
+}
+
+async function verifyEnumerator() {
+  const idInput = document.getElementById('enumeratorId');
+  const id = idInput.value.trim();
+  const loginBtn = document.getElementById('loginBtn');
+  
+  if (!id) { showError('Please enter your Enumerator ID'); return; }
+  
+  loginBtn.disabled = true;
+  loginBtn.innerHTML = '<span class="spinner"></span>Verifying...';
+  document.getElementById('loginError').classList.remove('show');
+  
+  const enumerator = volunteerData.find(v => String(v.id).trim().toLowerCase() === id.toLowerCase());
+  
+  if (enumerator) {
+    currentEnumerator = enumerator;
+    showConfirmation();
+  } else {
+    showError('Enumerator ID not found. Please check and try again.');
+  }
+  
+  loginBtn.disabled = false;
+  loginBtn.textContent = 'Continue';
+}
+
+function showConfirmation() {
+  document.getElementById('confirmId').textContent = currentEnumerator.id;
+  document.getElementById('confirmName').textContent = currentEnumerator.volunteer;
+  document.getElementById('confirmRegion').textContent = currentEnumerator.region_assigned;
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+
+function cancelLogin() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  document.getElementById('enumeratorId').value = '';
+  document.getElementById('enumeratorId').focus();
+}
+
+function confirmLogin() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  document.getElementById('loginOverlay').classList.add('hidden');
+  
+  if (currentEnumerator.region_assigned) {
+    const regionSelect = document.getElementById('region');
+    regionSelect.value = currentEnumerator.region_assigned;
+    regionSelect.dispatchEvent(new Event('change'));
+  }
+}
+
+function showError(message) {
+  const errorDiv = document.getElementById('loginError');
+  errorDiv.textContent = message;
+  errorDiv.classList.add('show');
+  setTimeout(() => errorDiv.classList.remove('show'), 5000);
+}
+
+document.getElementById('enumeratorId').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') verifyEnumerator();
+});
+
+function setupRegionDistricts() {
+  const regionSelect = document.getElementById('region');
+  const districtSelect = document.getElementById('district');
+  
+  Object.keys(GHANA_REGIONS_DISTRICTS).forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r; opt.textContent = r;
+    regionSelect.appendChild(opt);
+  });
+  
+  regionSelect.addEventListener('change', () => {
+    const districts = GHANA_REGIONS_DISTRICTS[regionSelect.value] || [];
+    districtSelect.innerHTML = '';
+    const placeholder = document.createElement('option');
+    placeholder.value = ''; placeholder.disabled = true; placeholder.selected = true;
+    placeholder.textContent = districts.length ? 'Select district' : 'Select region first';
+    districtSelect.appendChild(placeholder);
+    districts.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d; opt.textContent = d;
+      districtSelect.appendChild(opt);
+    });
+    districtSelect.disabled = districts.length === 0;
+  });
+}
+
+function captureLocation(){
+  if(!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(
+    pos => { lastPosition = pos; },
+    () => {},
+    { enableHighAccuracy:true, timeout:12000, maximumAge:0 }
+  );
+}
+
+function getDraft(){
+  try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } 
+  catch (err) { return null; }
 }
 
 function saveDraft(){
@@ -740,6 +484,8 @@ function saveDraft(){
     phone: document.getElementById('phone').value,
     businessName: document.getElementById('businessName').value,
     businessType: document.getElementById('businessType').value,
+    location: document.getElementById('location').value,
+    landmark: document.getElementById('landmark').value,
     streetName: document.getElementById('streetName').value,
     region: document.getElementById('region').value,
     district: document.getElementById('district').value,
@@ -748,15 +494,14 @@ function saveDraft(){
     requestedDate: document.getElementById('requestedDate').value,
     completedDate: document.getElementById('completedDate').value,
     photoData,
+    enumeratorId: currentEnumerator?.id || null,
     savedAt: new Date().toISOString()
   };
   localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
   updateOnlineStatus();
 }
 
-function clearDraft(){
-  localStorage.removeItem(DRAFT_KEY);
-}
+function clearDraft(){ localStorage.removeItem(DRAFT_KEY); }
 
 function loadDraft(){
   const draft = getDraft();
@@ -765,13 +510,14 @@ function loadDraft(){
   document.getElementById('phone').value = draft.phone || '';
   document.getElementById('businessName').value = draft.businessName || '';
   document.getElementById('businessType').value = draft.businessType || '';
+  document.getElementById('location').value = draft.location || '';
+  document.getElementById('landmark').value = draft.landmark || '';
   document.getElementById('streetName').value = draft.streetName || '';
-  if(draft.region){ document.getElementById('region').value = draft.region; }
-  if(draft.region){
-    const event = new Event('change');
-    document.getElementById('region').dispatchEvent(event);
+  if(draft.region){ 
+    document.getElementById('region').value = draft.region; 
+    document.getElementById('region').dispatchEvent(new Event('change'));
   }
-  if(draft.district){ document.getElementById('district').value = draft.district; }
+  if(draft.district) document.getElementById('district').value = draft.district;
   if(draft.status){
     const statusInput = document.querySelector(`input[name=status][value="${draft.status}"]`);
     if(statusInput) statusInput.checked = true;
@@ -787,13 +533,11 @@ function updateOnlineStatus(){
   const submitButton = document.querySelector('button.submit');
   const online = navigator.onLine;
   if(online){
-    banner.classList.remove('offline');
-    banner.classList.add('online');
+    banner.classList.remove('offline'); banner.classList.add('online');
     banner.textContent = 'Online — your draft is auto-saved locally.';
     submitButton.disabled = false;
   } else {
-    banner.classList.remove('online');
-    banner.classList.add('offline');
+    banner.classList.remove('online'); banner.classList.add('offline');
     banner.textContent = 'Offline — your draft is saved locally. Connect to submit.';
     submitButton.disabled = true;
   }
@@ -807,7 +551,6 @@ function registerDraftListeners(){
   window.addEventListener('offline', updateOnlineStatus);
 }
 
-// --- Photo capture (single add button, up to six images) ---
 function compressImage(file, maxDim, quality){
   return new Promise((resolve, reject)=>{
     const img = new Image();
@@ -817,11 +560,9 @@ function compressImage(file, maxDim, quality){
     img.onload = ()=>{
       let { width, height } = img;
       if(width > height && width > maxDim){
-        height = Math.round(height * (maxDim / width));
-        width = maxDim;
+        height = Math.round(height * (maxDim / width)); width = maxDim;
       } else if(height > maxDim){
-        width = Math.round(width * (maxDim / height));
-        height = maxDim;
+        width = Math.round(width * (maxDim / height)); height = maxDim;
       }
       const canvas = document.createElement('canvas');
       canvas.width = width; canvas.height = height;
@@ -835,11 +576,7 @@ function compressImage(file, maxDim, quality){
 
 const addSlot = document.createElement('label');
 addSlot.className = 'photo-slot add-slot';
-addSlot.innerHTML = `
-  <span class="plus-icon">+</span>
-  <span class="add-label">Add photo</span>
-  <input type="file" accept="image/*" capture="environment">
-`;
+addSlot.innerHTML = `<span class="plus-icon">+</span><span class="add-label">Add photo</span><input type="file" accept="image/*" capture="environment">`;
 const addInput = addSlot.querySelector('input');
 addInput.addEventListener('change', async e=>{
   const file = e.target.files[0];
@@ -878,38 +615,31 @@ function renderPhotos(){
     doneNote.textContent = 'Maximum of 6 photos captured.';
     photoGrid.appendChild(doneNote);
   }
-  addSlot.querySelector('.add-label').textContent =
-    photoData.length === 0 ? 'Add photo' : `Add photo (${photoData.length}/6)`;
+  addSlot.querySelector('.add-label').textContent = photoData.length === 0 ? 'Add photo' : `Add photo (${photoData.length}/6)`;
 }
-
-loadDraft();
-renderPhotos();
-registerDraftListeners();
-updateOnlineStatus();
-
-// --- Submit ---
-const submitBtn = document.querySelector('button.submit');
 
 document.getElementById('vform').addEventListener('submit', async function(e){
   e.preventDefault();
-
   const missingCount = Math.max(0, 6 - photoData.length);
   if(missingCount > 0){
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     addSlot.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'center' });
     document.getElementById('overlayTitle').textContent = 'All six photos required';
-    document.getElementById('overlaySub').textContent =
-      `Please capture ${missingCount} more photo${missingCount > 1 ? 's' : ''} before submitting.`;
+    document.getElementById('overlaySub').textContent = `Please capture ${missingCount} more photo${missingCount > 1 ? 's' : ''} before submitting.`;
     document.getElementById('summaryKv').innerHTML = '';
     document.getElementById('overlay').classList.add('show');
     return;
   }
 
   const payload = {
+    enumeratorId: currentEnumerator?.id || '',
+    enumeratorName: currentEnumerator?.volunteer || '',
     ownerName: document.getElementById('ownerName').value,
     phone: document.getElementById('phone').value,
     businessName: document.getElementById('businessName').value,
     businessType: document.getElementById('businessType').value,
+    location: document.getElementById('location').value,
+    landmark: document.getElementById('landmark').value,
     streetName: document.getElementById('streetName').value,
     region: document.getElementById('region').value,
     district: document.getElementById('district').value,
@@ -924,13 +654,13 @@ document.getElementById('vform').addEventListener('submit', async function(e){
     photo4: photoData[3] || '', photo5: photoData[4] || '', photo6: photoData[5] || '',
   };
 
-  // On-screen summary — geolocation intentionally omitted (captured silently,
-  // never shown to the collector).
   const kv = document.getElementById('summaryKv');
   kv.innerHTML = '';
   const labels = {
+    enumeratorId:'Enumerator ID', enumeratorName:'Enumerator Name',
     ownerName:'Owner name', phone:'Phone', businessName:'Business name',
-    businessType:'Business type', streetName:'Street', region:'Region',
+    businessType:'Business type', location:'Location', landmark:'Landmark',
+    streetName:'Street', region:'Region',
     district:'District', verificationStatus:'Status', observations:'Observations',
     requestedDate:'Requested', completedDate:'Completed'
   };
@@ -943,21 +673,12 @@ document.getElementById('vform').addEventListener('submit', async function(e){
   document.getElementById('overlayTitle').textContent = 'Submitting…';
   document.getElementById('overlaySub').textContent = 'Sending your report to the Google Sheet.';
   document.getElementById('overlay').classList.add('show');
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Submitting…';
-
-  if(CONFIG.SCRIPT_URL.startsWith('PASTE_')){
-    document.getElementById('overlayTitle').textContent = 'Backend not connected yet';
-    document.getElementById('overlaySub').textContent = 'Set CONFIG.SCRIPT_URL in index.html to your deployed Apps Script Web App URL — see README.md.';
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit Report';
-    return;
-  }
+  
+  const submitBtn = document.querySelector('button.submit');
+  submitBtn.disabled = true; submitBtn.textContent = 'Submitting…';
 
   try {
-    // text/plain avoids a CORS preflight against Apps Script; the script
-    // still parses e.postData.contents as JSON.
-    const res = await fetch(CONFIG.SCRIPT_URL, {
+    const res = await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
@@ -969,8 +690,8 @@ document.getElementById('vform').addEventListener('submit', async function(e){
       document.getElementById('vform').reset();
       photoData = [];
       renderPhotos();
-      districtSelect.innerHTML = '<option value="" disabled selected>Select region first</option>';
-      districtSelect.disabled = true;
+      document.getElementById('district').innerHTML = '<option value="" disabled selected>Select region first</option>';
+      document.getElementById('district').disabled = true;
       clearDraft();
     } else {
       throw new Error(result.message || 'Unknown error');
@@ -988,6 +709,5 @@ document.getElementById('closeOverlay').addEventListener('click', ()=>{
   document.getElementById('overlay').classList.remove('show');
 });
 </script>
-
 </body>
 </html>
