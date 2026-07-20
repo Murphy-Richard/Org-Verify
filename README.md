@@ -126,6 +126,10 @@ favicon just won't show anything.
 
 - **S/N** is auto-assigned as the next Sheet row number — no manual ID
   needed.
+- The form now supports draft autosave locally so partial entries are retained
+  if the browser closes or the connection drops.
+- The page registers a service worker for offline access to core form assets.
+- After submission, a confirmation overlay appears with the saved row number.
 - **Photos** — all six are **required**. The form won't submit until every
   slot is filled; empty slots are flagged and it scrolls to the first one.
   Each photo is compressed client-side (max 1280px, JPEG ~72% quality)

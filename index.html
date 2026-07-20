@@ -75,6 +75,123 @@
     text-align:center;
     min-width:0;
   }
+  .status-banner{
+    padding:12px 16px;
+    font-size:0.92rem;
+    text-align:center;
+    border-bottom:1px solid #b5defd;
+    background:#e8f4ff;
+    color:#0c4c7d;
+  }
+  .status-banner.offline{
+    background:#fff1f0;
+    border-color:#f5c6c6;
+    color:#8f1e13;
+  }
+  .photo-slot.add-slot{
+    border-style:dashed;
+    background:#fff;
+  }
+  .photo-slot.add-slot .plus-icon{
+    width:42px;
+    height:42px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    border:2px solid var(--accent);
+    color:var(--accent);
+    font-size:1.6rem;
+    font-weight:700;
+    background:rgba(11,95,255,0.08);
+  }
+  .photo-slot.add-slot .add-label{
+    display:block;
+    margin-top:10px;
+    font-size:0.95rem;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .cam-icon{
+    width:42px;
+    height:32px;
+    position:relative;
+    display:inline-block;
+  }
+  .cam-icon::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    border:2px solid var(--accent);
+    border-radius:8px;
+  }
+  .cam-icon::after{
+    content:'';
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:12px;
+    height:12px;
+    transform:translate(-50%, -50%);
+    border-radius:50%;
+    background:var(--accent);
+  }
+  .photo-thumb{
+    position:relative;
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    background:#fff;
+  }
+  .photo-thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .remove-photo{
+    position:absolute;
+    top:8px;
+    right:8px;
+    width:30px;
+    height:30px;
+    border:none;
+    border-radius:50%;
+    background:rgba(0,0,0,0.65);
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .submit:disabled{
+    background:#8ea8ff;
+    cursor:not-allowed;
+  }
+  .remove-photo:focus-visible,
+  .submit:focus-visible,
+  .status-toggle label:focus-visible,
+  .photo-slot input:focus-visible{
+    outline:3px solid #1f6feb;
+    outline-offset:2px;
+  }
+  .submit{
+    transition:transform 0.2s ease, background 0.2s ease;
+  }
+  .submit:active{
+    transform:scale(0.99);
+  }
+  .photo-thumb .badge{
+    position:absolute;
+    bottom:8px;
+    left:8px;
+    background:rgba(255,255,255,0.95);
+    color:var(--ink);
+    padding:4px 8px;
+    border-radius:8px;
+    font-size:0.72rem;
+  }
   .brand-copy h1{
     margin:0;
     font-size:1.15rem;
@@ -439,7 +556,7 @@
     <img src="logo.png" alt="Mastercard Foundation logo" onerror="this.style.display='none'">
   </div>
 </header>
-
+<div class="status-banner online" id="statusBanner" role="status" aria-live="polite">Online — your draft is auto-saved locally.</div>
 <main>
 
   <form id="vform">
@@ -447,35 +564,35 @@
     <div class="card">
       <h2><span class="n">1</span>Business Owner</h2>
 
-      <label>Business Owner Name <span class="req">*</span></label>
-      <input type="text" id="ownerName" required placeholder="e.g. Ama Boateng">
+      <label for="ownerName">Business Owner Name <span class="req">*</span></label>
+      <input type="text" id="ownerName" name="ownerName" autocomplete="name" required placeholder="e.g. Ama Boateng">
 
-      <label>Phone Number</label>
-      <input type="tel" id="phone" placeholder="e.g. 024 123 4567">
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="e.g. 024 123 4567">
     </div>
 
     <div class="card">
       <h2><span class="n">2</span>Business Details</h2>
 
-      <label>Business Name <span class="req">*</span></label>
-      <input type="text" id="businessName" required placeholder="e.g. Ama's Provisions Store">
+      <label for="businessName">Business Name <span class="req">*</span></label>
+      <input type="text" id="businessName" name="businessName" autocomplete="organization" required placeholder="e.g. Ama's Provisions Store">
 
-      <label>Business Type <span class="req">*</span></label>
-      <input type="text" id="businessType" required placeholder="e.g. Retail / Trading / Food vendor">
+      <label for="businessType">Business Type <span class="req">*</span></label>
+      <input type="text" id="businessType" name="businessType" autocomplete="organization" required placeholder="e.g. Retail / Trading / Food vendor">
 
-      <label>Street Name <span class="req">*</span></label>
-      <input type="text" id="streetName" required placeholder="e.g. Spintex Road">
+      <label for="streetName">Street Name <span class="req">*</span></label>
+      <input type="text" id="streetName" name="streetName" autocomplete="street-address" required placeholder="e.g. Spintex Road">
 
       <div class="row2">
         <div>
-          <label>Region <span class="req">*</span></label>
-          <select id="region" required>
+          <label for="region">Region <span class="req">*</span></label>
+          <select id="region" name="region" required>
             <option value="" disabled selected>Select region</option>
           </select>
         </div>
         <div>
-          <label>District <span class="req">*</span></label>
-          <select id="district" required disabled>
+          <label for="district">District <span class="req">*</span></label>
+          <select id="district" name="district" required disabled>
             <option value="" disabled selected>Select region first</option>
           </select>
         </div>
@@ -499,18 +616,18 @@
         <label for="statusNot">Not completed</label>
       </div>
 
-      <label>Detailed Observations</label>
-      <textarea id="observations" placeholder="Staff strength observed, security, conduciveness of the premises…"></textarea>
+      <label for="observations">Detailed Observations</label>
+      <textarea id="observations" name="observations" placeholder="Staff strength observed, security, conduciveness of the premises…"></textarea>
     </div>
 
     <div class="card">
       <h2><span class="n">5</span>Dates</h2>
 
-      <label>Requested Date <span class="req">*</span></label>
-      <input type="date" id="requestedDate" required>
+      <label for="requestedDate">Requested Date <span class="req">*</span></label>
+      <input type="date" id="requestedDate" name="requestedDate" required>
 
-      <label>Completed Date <span class="req">*</span></label>
-      <input type="date" id="completedDate" required>
+      <label for="completedDate">Completed Date <span class="req">*</span></label>
+      <input type="date" id="completedDate" name="completedDate" required>
     </div>
 
   </form>
@@ -531,6 +648,12 @@
 </div>
 
 <script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
 // ⚠️ SET THIS after deploying code.gs as a Web App (see README.md).
 const CONFIG = {
   SCRIPT_URL: "https://script.google.com/macros/s/AKfycbymz-dPf0buXedR7sXCXXA80MV25ycHhWn_cBES-oMXwSHfMlxOGB1qXo9q77RL1DUp/exec"
@@ -599,10 +722,92 @@ function captureLocation(){
 }
 captureLocation();
 
-// --- Photo capture (single add button, up to six images) ---
+const DRAFT_KEY = 'orgVerifyDraft';
 const photoGrid = document.getElementById('photoGrid');
-const photoData = [];
+let photoData = [];
 
+function getDraft(){
+  try {
+    return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+  } catch (err) {
+    return null;
+  }
+}
+
+function saveDraft(){
+  const draft = {
+    ownerName: document.getElementById('ownerName').value,
+    phone: document.getElementById('phone').value,
+    businessName: document.getElementById('businessName').value,
+    businessType: document.getElementById('businessType').value,
+    streetName: document.getElementById('streetName').value,
+    region: document.getElementById('region').value,
+    district: document.getElementById('district').value,
+    status: document.querySelector('input[name=status]:checked')?.value || 'Completed',
+    observations: document.getElementById('observations').value,
+    requestedDate: document.getElementById('requestedDate').value,
+    completedDate: document.getElementById('completedDate').value,
+    photoData,
+    savedAt: new Date().toISOString()
+  };
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  updateOnlineStatus();
+}
+
+function clearDraft(){
+  localStorage.removeItem(DRAFT_KEY);
+}
+
+function loadDraft(){
+  const draft = getDraft();
+  if(!draft) return;
+  document.getElementById('ownerName').value = draft.ownerName || '';
+  document.getElementById('phone').value = draft.phone || '';
+  document.getElementById('businessName').value = draft.businessName || '';
+  document.getElementById('businessType').value = draft.businessType || '';
+  document.getElementById('streetName').value = draft.streetName || '';
+  if(draft.region){ document.getElementById('region').value = draft.region; }
+  if(draft.region){
+    const event = new Event('change');
+    document.getElementById('region').dispatchEvent(event);
+  }
+  if(draft.district){ document.getElementById('district').value = draft.district; }
+  if(draft.status){
+    const statusInput = document.querySelector(`input[name=status][value="${draft.status}"]`);
+    if(statusInput) statusInput.checked = true;
+  }
+  document.getElementById('observations').value = draft.observations || '';
+  document.getElementById('requestedDate').value = draft.requestedDate || '';
+  document.getElementById('completedDate').value = draft.completedDate || '';
+  photoData = Array.isArray(draft.photoData) ? draft.photoData.slice(0, 6) : [];
+}
+
+function updateOnlineStatus(){
+  const banner = document.getElementById('statusBanner');
+  const submitButton = document.querySelector('button.submit');
+  const online = navigator.onLine;
+  if(online){
+    banner.classList.remove('offline');
+    banner.classList.add('online');
+    banner.textContent = 'Online — your draft is auto-saved locally.';
+    submitButton.disabled = false;
+  } else {
+    banner.classList.remove('online');
+    banner.classList.add('offline');
+    banner.textContent = 'Offline — your draft is saved locally. Connect to submit.';
+    submitButton.disabled = true;
+  }
+}
+
+function registerDraftListeners(){
+  const form = document.getElementById('vform');
+  form.addEventListener('input', saveDraft);
+  form.addEventListener('change', saveDraft);
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+}
+
+// --- Photo capture (single add button, up to six images) ---
 function compressImage(file, maxDim, quality){
   return new Promise((resolve, reject)=>{
     const img = new Image();
@@ -643,6 +848,7 @@ addInput.addEventListener('change', async e=>{
   if(photoData.length < 6){
     photoData.push(compressedDataUrl);
     renderPhotos();
+    saveDraft();
   }
   addInput.value = '';
 });
@@ -654,12 +860,13 @@ function renderPhotos(){
     thumb.className = 'photo-thumb';
     thumb.innerHTML = `
       <img src="${dataUrl}" alt="Captured photo ${idx + 1}">
-      <button type="button" class="remove-photo" data-idx="${idx}">×</button>
+      <button type="button" class="remove-photo" data-idx="${idx}" aria-label="Remove photo ${idx + 1}">×</button>
       <span class="badge">Photo ${idx + 1}</span>
     `;
     thumb.querySelector('button').addEventListener('click', e=>{
       photoData.splice(Number(e.target.dataset.idx), 1);
       renderPhotos();
+      saveDraft();
     });
     photoGrid.appendChild(thumb);
   });
@@ -675,7 +882,10 @@ function renderPhotos(){
     photoData.length === 0 ? 'Add photo' : `Add photo (${photoData.length}/6)`;
 }
 
+loadDraft();
 renderPhotos();
+registerDraftListeners();
+updateOnlineStatus();
 
 // --- Submit ---
 const submitBtn = document.querySelector('button.submit');
@@ -687,7 +897,7 @@ document.getElementById('vform').addEventListener('submit', async function(e){
   if(missingCount > 0){
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     addSlot.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'center' });
-    document.getElementById('overlayTitle').textContent = '📷 All six photos required';
+    document.getElementById('overlayTitle').textContent = 'All six photos required';
     document.getElementById('overlaySub').textContent =
       `Please capture ${missingCount} more photo${missingCount > 1 ? 's' : ''} before submitting.`;
     document.getElementById('summaryKv').innerHTML = '';
@@ -710,8 +920,8 @@ document.getElementById('vform').addEventListener('submit', async function(e){
     latitude: lastPosition ? lastPosition.coords.latitude.toFixed(6) : null,
     longitude: lastPosition ? lastPosition.coords.longitude.toFixed(6) : null,
     accuracyMeters: lastPosition ? Math.round(lastPosition.coords.accuracy) : null,
-    photo1: photoData[1] || '', photo2: photoData[2] || '', photo3: photoData[3] || '',
-    photo4: photoData[4] || '', photo5: photoData[5] || '', photo6: photoData[6] || '',
+    photo1: photoData[0] || '', photo2: photoData[1] || '', photo3: photoData[2] || '',
+    photo4: photoData[3] || '', photo5: photoData[4] || '', photo6: photoData[5] || '',
   };
 
   // On-screen summary — geolocation intentionally omitted (captured silently,
@@ -737,7 +947,7 @@ document.getElementById('vform').addEventListener('submit', async function(e){
   submitBtn.textContent = 'Submitting…';
 
   if(CONFIG.SCRIPT_URL.startsWith('PASTE_')){
-    document.getElementById('overlayTitle').textContent = '⚠️ Backend not connected yet';
+    document.getElementById('overlayTitle').textContent = 'Backend not connected yet';
     document.getElementById('overlaySub').textContent = 'Set CONFIG.SCRIPT_URL in index.html to your deployed Apps Script Web App URL — see README.md.';
     submitBtn.disabled = false;
     submitBtn.textContent = 'Submit Report';
@@ -754,19 +964,19 @@ document.getElementById('vform').addEventListener('submit', async function(e){
     });
     const result = await res.json();
     if(result.status === 'ok'){
-      document.getElementById('overlayTitle').textContent = '✅ Submitted';
+      document.getElementById('overlayTitle').textContent = 'Submitted successfully';
       document.getElementById('overlaySub').textContent = `Saved as row S/N ${result.sn} in the Google Sheet.`;
       document.getElementById('vform').reset();
-      Object.keys(photoData).forEach(k=>delete photoData[k]);
-      document.querySelectorAll('.photo-slot img').forEach(img=>img.remove());
-      document.querySelectorAll('.photo-slot .check').forEach(c=>c.remove());
+      photoData = [];
+      renderPhotos();
       districtSelect.innerHTML = '<option value="" disabled selected>Select region first</option>';
       districtSelect.disabled = true;
+      clearDraft();
     } else {
       throw new Error(result.message || 'Unknown error');
     }
   } catch (err) {
-    document.getElementById('overlayTitle').textContent = '❌ Submission failed';
+    document.getElementById('overlayTitle').textContent = 'Submission failed';
     document.getElementById('overlaySub').textContent = err.message + ' — your entries are still filled in, just retry.';
   } finally {
     submitBtn.disabled = false;
