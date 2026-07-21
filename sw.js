@@ -1,15 +1,17 @@
-// 1. Change version to v2 to force browsers to download the new code
-const CACHE_NAME = 'org-verify-cache-v2'; 
+// 1. INCREMENTED VERSION to v3 (Forces phones to download the new HTML/JS)
+const CACHE_NAME = 'org-verify-cache-v3';
 
 const ASSETS = [
   '/',
   '/index.html',
   '/README.md',
-  '/favicon.ico', 
-  '/favicon.png',
-  '/logo.png',       // Ensure this file exists in your root folder
-  '/jobberman.png',  // Ensure this file exists in your root folder
-  // Keep these if they still exist in your images folder
+  '/favicon.ico',       // Updated to match HTML
+  '/favicon.png',       // Kept as fallback
+  '/jobberman.png',     // Ensure this is in your root folder
+  '/logo.png',          // Ensure this is in your root folder
+  
+  // If you still have the long-named files in an images folder, keep these. 
+  // Otherwise, you can delete these two lines and just use the root files above.
   '/images/png-clipart-mastercard-logo-moneylive-mobile-payment-brand-mastercard-text-orange-removebg-preview.png',
   '/images/jobbermanyouth_ng_logo__1_-removebg-preview.png'
 ];
