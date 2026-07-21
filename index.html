@@ -113,7 +113,60 @@
   .hint{font-size:0.72rem; color:var(--muted); margin-top:4px;}
   .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   
-  /* Multiple Select Checkboxes Styling */
+  /* Org Verification Table Styling */
+  .org-verify-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.85rem;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .org-verify-table th, .org-verify-table td {
+    border: 1px solid var(--line);
+    padding: 10px 8px;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .org-verify-table th {
+    background: var(--accent-dark);
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    font-size: 0.8rem;
+  }
+  .org-verify-table td:nth-child(1) { font-weight: 600; color: var(--accent-dark); width: 22%; }
+  .org-verify-table td:nth-child(2) { width: 28%; font-weight: 500; word-break: break-word; }
+  .org-verify-table td:nth-child(3) { width: 20%; text-align: center; }
+  .org-verify-table td:nth-child(4) { width: 30%; }
+  .org-verify-table input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fff;
+  }
+  .org-verify-table input[type="text"]:disabled {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 8px 0;
+    cursor: default;
+  }
+  .org-verify-table label {
+    margin: 0 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .org-verify-table input[type="radio"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
   .bt-container {
     max-height: 220px;
     overflow-y: auto;
@@ -214,13 +267,14 @@
     #vform{column-count:2; column-gap:18px;}
     .submit-bar{margin:12px -20px 0; padding:14px 20px calc(14px + env(safe-area-inset-bottom));}
     button.submit{max-width:320px; margin:0 auto; display:block;}
+    .org-verify-table { font-size: 0.9rem; }
   }
   @media (prefers-reduced-motion:reduce){*{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}}
 </style>
 </head>
 <body>
 
-<!-- Login Overlay -->
+<!-- Enumerator Login Overlay -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card">
     <div class="login-logos">
@@ -240,7 +294,7 @@
   </div>
 </div>
 
-<!-- Confirmation Modal -->
+<!-- Enumerator Confirmation Modal -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-card">
     <h3>Confirm Your Details</h3>
@@ -290,7 +344,87 @@
     </div>
 
     <div class="card">
-      <h2><span class="n">2</span>Business Details</h2>
+      <h2><span class="n">2</span>Organization Details</h2>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label for="search_org_id">Enter Organization ID to Lookup</label>
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="search_org_id" placeholder="e.g. ORG-001" style="flex:1;">
+          <button type="button" class="login-btn" id="lookupOrgBtn" onclick="lookupOrg()" style="margin:0; padding:14px 20px; width:auto;">Search</button>
+        </div>
+      </div>
+
+      <div id="orgLookupSection" style="display:none;">
+        <table class="org-verify-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Details</th>
+              <th>Confirm</th>
+              <th>Correct Details (if No)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Org_ID</td>
+              <td id="detail_org_id">-</td>
+              <td>
+                <label><input type="radio" name="confirm_org_id" value="yes" checked onchange="toggleOrgCorrection('org_id', false)"> Yes</label>
+                <label><input type="radio" name="confirm_org_id" value="no" onchange="toggleOrgCorrection('org_id', true)"> No</label>
+              </td>
+              <td><input type="text" id="correct_org_id" disabled placeholder="Enter correct Org_ID"></td>
+            </tr>
+            <tr>
+              <td>Organization</td>
+              <td id="detail_organization">-</td>
+              <td>
+                <label><input type="radio" name="confirm_organization" value="yes" checked onchange="toggleOrgCorrection('organization', false)"> Yes</label>
+                <label><input type="radio" name="confirm_organization" value="no" onchange="toggleOrgCorrection('organization', true)"> No</label>
+              </td>
+              <td><input type="text" id="correct_organization" disabled placeholder="Enter correct Organization"></td>
+            </tr>
+            <tr>
+              <td>Country</td>
+              <td id="detail_country">-</td>
+              <td>
+                <label><input type="radio" name="confirm_country" value="yes" checked onchange="toggleOrgCorrection('country', false)"> Yes</label>
+                <label><input type="radio" name="confirm_country" value="no" onchange="toggleOrgCorrection('country', true)"> No</label>
+              </td>
+              <td><input type="text" id="correct_country" disabled placeholder="Enter correct Country"></td>
+            </tr>
+            <tr>
+              <td>Address</td>
+              <td id="detail_address">-</td>
+              <td>
+                <label><input type="radio" name="confirm_address" value="yes" checked onchange="toggleOrgCorrection('address', false)"> Yes</label>
+                <label><input type="radio" name="confirm_address" value="no" onchange="toggleOrgCorrection('address', true)"> No</label>
+              </td>
+              <td><input type="text" id="correct_address" disabled placeholder="Enter correct Address"></td>
+            </tr>
+            <tr>
+              <td>Region</td>
+              <td id="detail_region">-</td>
+              <td>
+                <label><input type="radio" name="confirm_region" value="yes" checked onchange="toggleOrgCorrection('region', false)"> Yes</label>
+                <label><input type="radio" name="confirm_region" value="no" onchange="toggleOrgCorrection('region', true)"> No</label>
+              </td>
+              <td><input type="text" id="correct_region" disabled placeholder="Enter correct Region"></td>
+            </tr>
+            <tr>
+              <td>Phone number</td>
+              <td id="detail_phone">-</td>
+              <td>
+                <label><input type="radio" name="confirm_phone" value="yes" checked onchange="toggleOrgCorrection('phone', false)"> Yes</label>
+                <label><input type="radio" name="confirm_phone" value="no" onchange="toggleOrgCorrection('phone', true)"> No</label>
+              </td>
+              <td><input type="text" id="correct_phone" disabled placeholder="Enter correct Phone number"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="n">3</span>Business Details</h2>
       <label for="businessName">Business Name <span class="req">*</span></label>
       <input type="text" id="businessName" name="businessName" autocomplete="organization" required placeholder="e.g. Ama's Provisions Store">
       
@@ -335,13 +469,13 @@
     </div>
 
     <div class="card">
-      <h2><span class="n">3</span>Photos (live camera capture) <span class="req">*</span></h2>
+      <h2><span class="n">4</span>Photos (live camera capture) <span class="req">*</span></h2>
       <div class="photo-grid" id="photoGrid"></div>
       <p class="hint">Tap the + button to add a photo. <strong>Capture six images total.</strong></p>
     </div>
 
     <div class="card">
-      <h2><span class="n">4</span>Verification</h2>
+      <h2><span class="n">5</span>Verification</h2>
       <label>Verification Status <span class="req">*</span></label>
       <div class="status-toggle">
         <input type="radio" name="status" id="statusDone" value="Completed" checked>
@@ -354,7 +488,7 @@
     </div>
 
     <div class="card">
-      <h2><span class="n">5</span>Dates</h2>
+      <h2><span class="n">6</span>Dates</h2>
       <label for="requestedDate">Requested Date <span class="req">*</span></label>
       <input type="date" id="requestedDate" name="requestedDate" required>
       <label for="completedDate">Completed Date <span class="req">*</span></label>
@@ -438,6 +572,7 @@ let lastPosition = null;
 const DRAFT_KEY = 'orgVerifyDraft';
 const photoGrid = document.getElementById('photoGrid');
 let photoData = [];
+const orgFields = ['org_id', 'organization', 'country', 'address', 'region', 'phone'];
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadVolunteerData();
@@ -454,21 +589,16 @@ async function loadVolunteerData() {
   try {
     const response = await fetch(SCRIPT_URL + '?action=getVolunteers');
     const data = await response.json();
-    if (data.volunteers) {
-      volunteerData = data.volunteers;
-    } else if (data.error) {
-      showError('Unable to load enumerator data: ' + data.error);
-    }
+    if (data.volunteers) volunteerData = data.volunteers;
+    else if (data.error) showError('Unable to load enumerator data: ' + data.error);
   } catch (error) {
     showError('Unable to load enumerator data. Please check your connection.');
   }
 }
 
 async function verifyEnumerator() {
-  const idInput = document.getElementById('enumeratorId');
-  const id = idInput.value.trim();
+  const id = document.getElementById('enumeratorId').value.trim();
   const loginBtn = document.getElementById('loginBtn');
-  
   if (!id) { showError('Please enter your Enumerator ID'); return; }
   
   loginBtn.disabled = true;
@@ -476,14 +606,12 @@ async function verifyEnumerator() {
   document.getElementById('loginError').classList.remove('show');
   
   const enumerator = volunteerData.find(v => String(v.id).trim().toLowerCase() === id.toLowerCase());
-  
   if (enumerator) {
     currentEnumerator = enumerator;
     showConfirmation();
   } else {
     showError('Enumerator ID not found. Please check and try again.');
   }
-  
   loginBtn.disabled = false;
   loginBtn.textContent = 'Continue';
 }
@@ -504,7 +632,6 @@ function cancelLogin() {
 function confirmLogin() {
   document.getElementById('confirmOverlay').classList.remove('show');
   document.getElementById('loginOverlay').classList.add('hidden');
-  
   if (currentEnumerator.region_assigned) {
     const regionSelect = document.getElementById('region');
     regionSelect.value = currentEnumerator.region_assigned;
@@ -523,29 +650,87 @@ document.getElementById('enumeratorId').addEventListener('keypress', function(e)
   if (e.key === 'Enter') verifyEnumerator();
 });
 
+// --- ORG LOOKUP LOGIC ---
+async function lookupOrg() {
+  const orgId = document.getElementById('search_org_id').value.trim();
+  if (!orgId) { alert('Please enter an Org ID'); return; }
+  
+  const btn = document.getElementById('lookupOrgBtn');
+  btn.disabled = true; btn.textContent = 'Searching...';
+  
+  try {
+    const response = await fetch(SCRIPT_URL + '?action=getOrgDetails&orgId=' + encodeURIComponent(orgId));
+    const data = await response.json();
+    
+    document.getElementById('orgLookupSection').style.display = 'block';
+    
+    if (data.found) {
+      document.getElementById('detail_org_id').textContent = data.org.org_id;
+      document.getElementById('detail_organization').textContent = data.org.organization;
+      document.getElementById('detail_country').textContent = data.org.country;
+      document.getElementById('detail_address').textContent = data.org.address;
+      document.getElementById('detail_region').textContent = data.org.region;
+      document.getElementById('detail_phone').textContent = data.org.phone;
+      
+      // Reset all to Yes and disable corrections
+      orgFields.forEach(field => {
+        document.querySelector(`input[name="confirm_${field}"][value="yes"]`).checked = true;
+        toggleOrgCorrection(field, false);
+      });
+    } else {
+      // Not found: clear details, auto-select "No" so they can manually enter
+      orgFields.forEach(field => {
+        document.getElementById('detail_' + field).textContent = '-';
+        document.querySelector(`input[name="confirm_${field}"][value="no"]`).checked = true;
+        toggleOrgCorrection(field, true);
+      });
+      alert('Organization ID not found. Please select "No" and enter the correct details manually.');
+    }
+    saveDraft();
+  } catch (err) {
+    alert('Error looking up organization. Please try again.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Search';
+  }
+}
+
+function toggleOrgCorrection(field, isNo) {
+  const input = document.getElementById('correct_' + field);
+  input.disabled = !isNo;
+  if (!isNo) {
+    input.value = ''; 
+  }
+  saveDraft();
+}
+
+function getOrgValue(field) {
+  const isNo = document.querySelector(`input[name="confirm_${field}"][value="no"]`).checked;
+  if (isNo) {
+    return document.getElementById('correct_' + field).value.trim();
+  }
+  return document.getElementById('detail_' + field).textContent.trim();
+}
+
+// --- SECTOR & BUSINESS TYPE LOGIC ---
 function setupSectorAndBusinessTypes() {
   const sectorSelect = document.getElementById('sector');
   const btContainer = document.getElementById('businessTypesContainer');
   const btCheckboxes = document.getElementById('businessTypesCheckboxes');
   const sectorOtherInput = document.getElementById('sectorOtherInput');
   const btOtherInput = document.getElementById('businessTypeOtherInput');
-  const btOtherCheckboxId = 'btOtherCheckbox';
 
-  // Populate sectors
   Object.keys(SECTOR_BUSINESS_TYPES).forEach(sector => {
     const opt = document.createElement('option');
-    opt.value = sector;
-    opt.textContent = sector;
+    opt.value = sector; opt.textContent = sector;
     sectorSelect.appendChild(opt);
   });
   const otherOpt = document.createElement('option');
-  otherOpt.value = 'Other';
-  otherOpt.textContent = 'Other (Specify)';
+  otherOpt.value = 'Other'; otherOpt.textContent = 'Other (Specify)';
   sectorSelect.appendChild(otherOpt);
 
   sectorSelect.addEventListener('change', () => {
     const sector = sectorSelect.value;
-    btCheckboxes.innerHTML = ''; // Clear previous
+    btCheckboxes.innerHTML = '';
     
     if (sector === 'Other') {
       sectorOtherInput.classList.add('show');
@@ -559,49 +744,36 @@ function setupSectorAndBusinessTypes() {
       types.forEach(type => {
         const label = document.createElement('label');
         const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.name = 'businessType';
-        checkbox.value = type;
-        
+        checkbox.type = 'checkbox'; checkbox.name = 'businessType'; checkbox.value = type;
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(type));
         btCheckboxes.appendChild(label);
       });
 
-      // Add "Other" checkbox
       const otherLabel = document.createElement('label');
       const otherCheckbox = document.createElement('input');
-      otherCheckbox.type = 'checkbox';
-      otherCheckbox.name = 'businessType';
-      otherCheckbox.value = 'Other';
-      otherCheckbox.id = btOtherCheckboxId;
-      
+      otherCheckbox.type = 'checkbox'; otherCheckbox.name = 'businessType'; otherCheckbox.value = 'Other';
       otherCheckbox.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          btOtherInput.classList.add('show');
-        } else {
-          btOtherInput.classList.remove('show');
-          document.getElementById('businessTypeOther').value = '';
-        }
+        btOtherInput.classList.toggle('show', e.target.checked);
+        if (!e.target.checked) document.getElementById('businessTypeOther').value = '';
+        saveDraft();
       });
-      
       otherLabel.appendChild(otherCheckbox);
       otherLabel.appendChild(document.createTextNode('Other (Specify)'));
       btCheckboxes.appendChild(otherLabel);
     }
+    saveDraft();
   });
 }
 
 function setupRegionDistricts() {
   const regionSelect = document.getElementById('region');
   const districtSelect = document.getElementById('district');
-  
   Object.keys(GHANA_REGIONS_DISTRICTS).forEach(r => {
     const opt = document.createElement('option');
     opt.value = r; opt.textContent = r;
     regionSelect.appendChild(opt);
   });
-  
   regionSelect.addEventListener('change', () => {
     const districts = GHANA_REGIONS_DISTRICTS[regionSelect.value] || [];
     districtSelect.innerHTML = '';
@@ -620,11 +792,7 @@ function setupRegionDistricts() {
 
 function captureLocation(){
   if(!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(
-    pos => { lastPosition = pos; },
-    () => {},
-    { enableHighAccuracy:true, timeout:12000, maximumAge:0 }
-  );
+  navigator.geolocation.getCurrentPosition(pos => { lastPosition = pos; }, () => {}, { enableHighAccuracy:true, timeout:12000, maximumAge:0 });
 }
 
 function getDraft(){
@@ -634,9 +802,20 @@ function getDraft(){
 
 function saveDraft(){
   const selectedBTs = Array.from(document.querySelectorAll('input[name="businessType"]:checked')).map(cb => cb.value);
+  const orgState = {};
+  orgFields.forEach(field => {
+    orgState[field] = {
+      detail: document.getElementById('detail_' + field).textContent,
+      isNo: document.querySelector(`input[name="confirm_${field}"][value="no"]`).checked,
+      correct: document.getElementById('correct_' + field).value
+    };
+  });
+
   const draft = {
     ownerName: document.getElementById('ownerName').value,
     phone: document.getElementById('phone').value,
+    search_org_id: document.getElementById('search_org_id').value,
+    orgState: orgState,
     businessName: document.getElementById('businessName').value,
     sector: document.getElementById('sector').value,
     sectorOther: document.getElementById('sectorOther').value,
@@ -665,13 +844,28 @@ function clearDraft(){ localStorage.removeItem(DRAFT_KEY); }
 function loadDraft(){
   const draft = getDraft();
   if(!draft) return;
+  
   document.getElementById('ownerName').value = draft.ownerName || '';
   document.getElementById('phone').value = draft.phone || '';
+  document.getElementById('search_org_id').value = draft.search_org_id || '';
   document.getElementById('businessName').value = draft.businessName || '';
   document.getElementById('businessActivities').value = draft.businessActivities || '';
   document.getElementById('location').value = draft.location || '';
   document.getElementById('landmark').value = draft.landmark || '';
   document.getElementById('streetName').value = draft.streetName || '';
+  
+  if (draft.orgState) {
+    document.getElementById('orgLookupSection').style.display = 'block';
+    orgFields.forEach(field => {
+      const state = draft.orgState[field];
+      if (state) {
+        document.getElementById('detail_' + field).textContent = state.detail || '-';
+        document.querySelector(`input[name="confirm_${field}"][value="${state.isNo ? 'no' : 'yes'}"]`).checked = true;
+        document.getElementById('correct_' + field).value = state.correct || '';
+        toggleOrgCorrection(field, state.isNo);
+      }
+    });
+  }
   
   if(draft.sector){
     document.getElementById('sector').value = draft.sector;
@@ -739,11 +933,8 @@ function compressImage(file, maxDim, quality){
     reader.onerror = reject;
     img.onload = ()=>{
       let { width, height } = img;
-      if(width > height && width > maxDim){
-        height = Math.round(height * (maxDim / width)); width = maxDim;
-      } else if(height > maxDim){
-        width = Math.round(width * (maxDim / height)); height = maxDim;
-      }
+      if(width > height && width > maxDim){ height = Math.round(height * (maxDim / width)); width = maxDim; } 
+      else if(height > maxDim){ width = Math.round(width * (maxDim / height)); height = maxDim; }
       const canvas = document.createElement('canvas');
       canvas.width = width; canvas.height = height;
       canvas.getContext('2d').drawImage(img, 0, 0, width, height);
@@ -775,11 +966,7 @@ function renderPhotos(){
   photoData.forEach((dataUrl, idx)=>{
     const thumb = document.createElement('div');
     thumb.className = 'photo-thumb';
-    thumb.innerHTML = `
-      <img src="${dataUrl}" alt="Captured photo ${idx + 1}">
-      <button type="button" class="remove-photo" data-idx="${idx}" aria-label="Remove photo ${idx + 1}">×</button>
-      <span class="badge">Photo ${idx + 1}</span>
-    `;
+    thumb.innerHTML = `<img src="${dataUrl}" alt="Captured photo ${idx + 1}"><button type="button" class="remove-photo" data-idx="${idx}" aria-label="Remove photo ${idx + 1}">×</button><span class="badge">Photo ${idx + 1}</span>`;
     thumb.querySelector('button').addEventListener('click', e=>{
       photoData.splice(Number(e.target.dataset.idx), 1);
       renderPhotos();
@@ -811,12 +998,7 @@ document.getElementById('vform').addEventListener('submit', async function(e){
     return;
   }
 
-  // Handle Sector "Other"
-  const sectorValue = document.getElementById('sector').value === 'Other' 
-    ? (document.getElementById('sectorOther').value.trim() || 'Other') 
-    : document.getElementById('sector').value;
-
-  // Handle Business Types Multiple Selection & "Other"
+  const sectorValue = document.getElementById('sector').value === 'Other' ? (document.getElementById('sectorOther').value.trim() || 'Other') : document.getElementById('sector').value;
   const selectedBTs = Array.from(document.querySelectorAll('input[name="businessType"]:checked')).map(cb => {
     return cb.value === 'Other' ? (document.getElementById('businessTypeOther').value.trim() || 'Other') : cb.value;
   });
@@ -824,12 +1006,18 @@ document.getElementById('vform').addEventListener('submit', async function(e){
   const payload = {
     enumeratorId: currentEnumerator?.id || '',
     enumeratorName: currentEnumerator?.volunteer || '',
+    orgId: getOrgValue('org_id'),
+    orgName: getOrgValue('organization'),
+    orgCountry: getOrgValue('country'),
+    orgAddress: getOrgValue('address'),
+    orgRegion: getOrgValue('region'),
+    orgPhone: getOrgValue('phone'),
     ownerName: document.getElementById('ownerName').value,
     phone: document.getElementById('phone').value,
-    businessName: document.getElementById('businessName').value,
     sector: sectorValue,
-    businessType: selectedBTs.join(', '), // Joins multiple selections with comma for the sheet
+    businessType: selectedBTs.join(', '),
     businessActivities: document.getElementById('businessActivities').value,
+    businessName: document.getElementById('businessName').value,
     location: document.getElementById('location').value,
     landmark: document.getElementById('landmark').value,
     streetName: document.getElementById('streetName').value,
@@ -850,8 +1038,10 @@ document.getElementById('vform').addEventListener('submit', async function(e){
   kv.innerHTML = '';
   const labels = {
     enumeratorId:'Enumerator ID', enumeratorName:'Enumerator Name',
-    ownerName:'Owner name', phone:'Phone', businessName:'Business name',
-    sector:'Sector', businessType:'Business Types', businessActivities:'Business Activities',
+    orgId:'Org ID', orgName:'Organization', orgCountry:'Country', orgAddress:'Address',
+    orgRegion:'Org Region', orgPhone:'Org Phone',
+    ownerName:'Owner name', phone:'Phone', sector:'Sector', businessType:'Business Types',
+    businessActivities:'Business Activities', businessName:'Business name',
     location:'Location', landmark:'Landmark', streetName:'Street', region:'Region',
     district:'District', verificationStatus:'Status', observations:'Observations',
     requestedDate:'Requested', completedDate:'Completed'
@@ -884,6 +1074,7 @@ document.getElementById('vform').addEventListener('submit', async function(e){
       renderPhotos();
       document.getElementById('district').innerHTML = '<option value="" disabled selected>Select region first</option>';
       document.getElementById('district').disabled = true;
+      document.getElementById('orgLookupSection').style.display = 'none';
       document.getElementById('businessTypesContainer').style.display = 'none';
       document.getElementById('sectorOtherInput').classList.remove('show');
       document.getElementById('businessTypeOtherInput').classList.remove('show');
