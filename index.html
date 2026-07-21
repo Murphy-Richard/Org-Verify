@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Organization Verification For</title>
+<title>Organization Verification Form</title>
 <link rel="icon" href="favicon.ico">
 <style>
   :root{
@@ -112,6 +112,41 @@
   textarea{resize:vertical; min-height:80px;}
   .hint{font-size:0.72rem; color:var(--muted); margin-top:4px;}
   .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  
+  /* Multiple Select Checkboxes Styling */
+  .bt-container {
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+    margin-top: 4px;
+  }
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    margin: 0;
+  }
+  .checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    margin: 0;
+  }
+  .other-input { margin-top: 8px; display: none; }
+  .other-input.show { display: block; }
   
   .photo-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin-top:10px;}
   .photo-slot{
@@ -258,14 +293,35 @@
       <h2><span class="n">2</span>Business Details</h2>
       <label for="businessName">Business Name <span class="req">*</span></label>
       <input type="text" id="businessName" name="businessName" autocomplete="organization" required placeholder="e.g. Ama's Provisions Store">
-      <label for="businessType">Business Type <span class="req">*</span></label>
-      <input type="text" id="businessType" name="businessType" autocomplete="organization" required placeholder="e.g. Retail / Trading / Food vendor">
+      
+      <label for="sector">Sector of Operation <span class="req">*</span></label>
+      <select id="sector" name="sector" required>
+        <option value="" disabled selected>Select sector</option>
+      </select>
+      <div class="other-input" id="sectorOtherInput">
+        <input type="text" id="sectorOther" placeholder="Specify sector">
+      </div>
+
+      <label>Business Types <span class="req">*</span></label>
+      <div class="bt-container" id="businessTypesContainer" style="display:none;">
+        <div class="checkbox-group" id="businessTypesCheckboxes"></div>
+      </div>
+      <div class="other-input" id="businessTypeOtherInput">
+        <input type="text" id="businessTypeOther" placeholder="Specify business type">
+      </div>
+
+      <label for="businessActivities">Business Activities <span class="req">*</span></label>
+      <input type="text" id="businessActivities" name="businessActivities" required placeholder="e.g. Retail trading of food items">
+
       <label for="location">Location <span class="req">*</span></label>
       <input type="text" id="location" name="location" required placeholder="e.g. Near Market Circle">
+      
       <label for="landmark">Landmark <span class="req">*</span></label>
       <input type="text" id="landmark" name="landmark" required placeholder="e.g. Opposite GT Bank">
+      
       <label for="streetName">Street Name <span class="req">*</span></label>
       <input type="text" id="streetName" name="streetName" autocomplete="street-address" required placeholder="e.g. Spintex Road">
+      
       <div class="row2">
         <div>
           <label for="region">Region <span class="req">*</span></label>
@@ -307,7 +363,7 @@
   </form>
 
   <div class="submit-bar">
-    <button class="submit" type="submit" form="vform">Submit Report</button>
+    <button class="submit" type="submit" form="vform">Submit Form</button>
     <p class="note">S/N and photo links are assigned automatically by the Google Sheet.</p>
   </div>
 </main>
@@ -315,7 +371,7 @@
 <div class="overlay" id="overlay">
   <div class="sheet">
     <h3 id="overlayTitle">Submitting…</h3>
-    <div class="sub" id="overlaySub">Sending your report to the Google Sheet.</div>
+    <div class="sub" id="overlaySub">Sending your responses to the Google Sheet.</div>
     <div class="kv" id="summaryKv"></div>
     <button id="closeOverlay">Close</button>
   </div>
@@ -326,7 +382,6 @@ if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 }
 
-// ️ PASTE YOUR DEPLOYED APPS SCRIPT WEB APP URL HERE
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymz-dPf0buXedR7sXCXXA80MV25ycHhWn_cBES-oMXwSHfMlxOGB1qXo9q77RL1DUp/exec";
 
 const GHANA_REGIONS_DISTRICTS = {
@@ -348,6 +403,35 @@ const GHANA_REGIONS_DISTRICTS = {
   "Western North": ["Aowin","Bia East","Bia West","Bibiani Anhwiaso Bekwai","Bodi","Juaboso","Sefwi Akontombra","Sefwi-Wiawso","Suaman"]
 };
 
+const SECTOR_BUSINESS_TYPES = {
+  "Agriculture & Agribusiness": ["Farming", "Crop Production", "Livestock Farming", "Poultry", "Fisheries", "Aquaculture", "Agro-processing", "Agricultural Supplies"],
+  "Manufacturing": ["Food & Beverage Manufacturing", "Textiles", "Garments", "Chemicals", "Plastics", "Furniture", "Metal Works", "Pharmaceuticals"],
+  "Construction & Real Estate": ["Construction Companies", "Property Development", "Real Estate Agencies", "Property Management", "Architecture", "Civil Engineering"],
+  "Financial Services": ["Banks", "Microfinance", "Insurance", "FinTech", "Investment Firms", "Savings & Loans", "Credit Unions"],
+  "Technology & IT": ["Software Development", "IT Services", "Cybersecurity", "Telecommunications", "Data Services", "Hardware", "Electronics"],
+  "Retail & Wholesale": ["Supermarkets", "Shops", "E-commerce", "Wholesale Trading", "Distributors", "Importers", "Exporters"],
+  "Transportation & Logistics": ["Haulage", "Courier Services", "Freight Forwarding", "Warehousing", "Transport Companies", "Car Rental", "Ride-Hailing"],
+  "Hospitality & Tourism": ["Hotels", "Guesthouses", "Restaurants", "Catering", "Travel Agencies", "Tour Operators", "Event Centers"],
+  "Healthcare": ["Hospitals", "Clinics", "Pharmacies", "Laboratories", "Medical Equipment Suppliers", "Health Insurance"],
+  "Education & Training": ["Schools", "Universities", "Vocational Training", "Professional Training", "Online Education", "Tutoring"],
+  "Professional Services": ["Consulting", "Accounting", "Auditing", "Legal Services", "HR Services", "Recruitment", "Business Advisory"],
+  "Marketing & Media": ["Advertising Agencies", "Digital Marketing", "PR", "Media Houses", "Printing", "Publishing", "Content Creation"],
+  "Energy & Utilities": ["Electricity", "Solar Energy", "Renewable Energy", "Fuel & Petroleum", "Water Supply", "Waste Management"],
+  "Mining & Natural Resources": ["Gold Mining", "Mineral Extraction", "Quarrying", "Oil & Gas", "Mineral Processing"],
+  "Telecommunications": ["Mobile Network Operators", "Internet Service Providers", "Telecom Equipment", "Communication Services"],
+  "Beauty & Personal Care": ["Salons", "Barbershops", "Spas", "Cosmetics", "Skincare", "Beauty Product Retail"],
+  "Fashion & Apparel": ["Clothing Manufacturing", "Fashion Design", "Boutiques", "Shoe Making", "Accessories", "Tailoring"],
+  "Food & Beverage": ["Restaurants", "Fast Food", "Bakeries", "Food Processing", "Beverage Production", "Food Distribution"],
+  "Automotive": ["Car Dealerships", "Auto Repairs", "Spare Parts", "Car Washes", "Vehicle Importation", "Auto Services"],
+  "Creative & Entertainment": ["Music", "Film", "Photography", "Gaming", "Art", "Events", "Entertainment Production"],
+  "Security Services": ["Private Security", "Security Equipment", "CCTV Installation", "Access Control", "Risk Management"],
+  "Non-Profit & Social Services": ["NGOs", "Foundations", "Charities", "Community Organizations", "Development Organizations"],
+  "Government & Public Sector": ["Ministries", "Municipalities", "Government Agencies", "Public Institutions"],
+  "Trading & Import/Export": ["General Trading", "Importers", "Exporters", "Commodity Trading", "International Trade"],
+  "Pharmaceuticals": ["Pharmaceutical Manufacturing", "Drug Importation", "Pharmacies", "Medical Distribution"],
+  "Environmental Services": ["Waste Management", "Recycling", "Environmental Consulting", "Sanitation", "Water Treatment"]
+};
+
 let currentEnumerator = null;
 let volunteerData = [];
 let lastPosition = null;
@@ -358,6 +442,7 @@ let photoData = [];
 document.addEventListener('DOMContentLoaded', async () => {
   await loadVolunteerData();
   setupRegionDistricts();
+  setupSectorAndBusinessTypes();
   loadDraft();
   renderPhotos();
   registerDraftListeners();
@@ -438,6 +523,75 @@ document.getElementById('enumeratorId').addEventListener('keypress', function(e)
   if (e.key === 'Enter') verifyEnumerator();
 });
 
+function setupSectorAndBusinessTypes() {
+  const sectorSelect = document.getElementById('sector');
+  const btContainer = document.getElementById('businessTypesContainer');
+  const btCheckboxes = document.getElementById('businessTypesCheckboxes');
+  const sectorOtherInput = document.getElementById('sectorOtherInput');
+  const btOtherInput = document.getElementById('businessTypeOtherInput');
+  const btOtherCheckboxId = 'btOtherCheckbox';
+
+  // Populate sectors
+  Object.keys(SECTOR_BUSINESS_TYPES).forEach(sector => {
+    const opt = document.createElement('option');
+    opt.value = sector;
+    opt.textContent = sector;
+    sectorSelect.appendChild(opt);
+  });
+  const otherOpt = document.createElement('option');
+  otherOpt.value = 'Other';
+  otherOpt.textContent = 'Other (Specify)';
+  sectorSelect.appendChild(otherOpt);
+
+  sectorSelect.addEventListener('change', () => {
+    const sector = sectorSelect.value;
+    btCheckboxes.innerHTML = ''; // Clear previous
+    
+    if (sector === 'Other') {
+      sectorOtherInput.classList.add('show');
+      btContainer.style.display = 'none';
+      btOtherInput.classList.remove('show');
+    } else {
+      sectorOtherInput.classList.remove('show');
+      btContainer.style.display = 'block';
+      
+      const types = SECTOR_BUSINESS_TYPES[sector] || [];
+      types.forEach(type => {
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = 'businessType';
+        checkbox.value = type;
+        
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(type));
+        btCheckboxes.appendChild(label);
+      });
+
+      // Add "Other" checkbox
+      const otherLabel = document.createElement('label');
+      const otherCheckbox = document.createElement('input');
+      otherCheckbox.type = 'checkbox';
+      otherCheckbox.name = 'businessType';
+      otherCheckbox.value = 'Other';
+      otherCheckbox.id = btOtherCheckboxId;
+      
+      otherCheckbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          btOtherInput.classList.add('show');
+        } else {
+          btOtherInput.classList.remove('show');
+          document.getElementById('businessTypeOther').value = '';
+        }
+      });
+      
+      otherLabel.appendChild(otherCheckbox);
+      otherLabel.appendChild(document.createTextNode('Other (Specify)'));
+      btCheckboxes.appendChild(otherLabel);
+    }
+  });
+}
+
 function setupRegionDistricts() {
   const regionSelect = document.getElementById('region');
   const districtSelect = document.getElementById('district');
@@ -479,11 +633,16 @@ function getDraft(){
 }
 
 function saveDraft(){
+  const selectedBTs = Array.from(document.querySelectorAll('input[name="businessType"]:checked')).map(cb => cb.value);
   const draft = {
     ownerName: document.getElementById('ownerName').value,
     phone: document.getElementById('phone').value,
     businessName: document.getElementById('businessName').value,
-    businessType: document.getElementById('businessType').value,
+    sector: document.getElementById('sector').value,
+    sectorOther: document.getElementById('sectorOther').value,
+    businessTypes: selectedBTs,
+    businessTypeOther: document.getElementById('businessTypeOther').value,
+    businessActivities: document.getElementById('businessActivities').value,
     location: document.getElementById('location').value,
     landmark: document.getElementById('landmark').value,
     streetName: document.getElementById('streetName').value,
@@ -509,10 +668,31 @@ function loadDraft(){
   document.getElementById('ownerName').value = draft.ownerName || '';
   document.getElementById('phone').value = draft.phone || '';
   document.getElementById('businessName').value = draft.businessName || '';
-  document.getElementById('businessType').value = draft.businessType || '';
+  document.getElementById('businessActivities').value = draft.businessActivities || '';
   document.getElementById('location').value = draft.location || '';
   document.getElementById('landmark').value = draft.landmark || '';
   document.getElementById('streetName').value = draft.streetName || '';
+  
+  if(draft.sector){
+    document.getElementById('sector').value = draft.sector;
+    document.getElementById('sector').dispatchEvent(new Event('change'));
+    if(draft.sector === 'Other' && draft.sectorOther){
+      document.getElementById('sectorOther').value = draft.sectorOther;
+      document.getElementById('sectorOtherInput').classList.add('show');
+    }
+  }
+  
+  if(draft.businessTypes && Array.isArray(draft.businessTypes)){
+    draft.businessTypes.forEach(bt => {
+      const cb = document.querySelector(`input[name="businessType"][value="${bt}"]`);
+      if(cb) cb.checked = true;
+    });
+    if(draft.businessTypes.includes('Other') && draft.businessTypeOther){
+      document.getElementById('businessTypeOther').value = draft.businessTypeOther;
+      document.getElementById('businessTypeOtherInput').classList.add('show');
+    }
+  }
+  
   if(draft.region){ 
     document.getElementById('region').value = draft.region; 
     document.getElementById('region').dispatchEvent(new Event('change'));
@@ -631,13 +811,25 @@ document.getElementById('vform').addEventListener('submit', async function(e){
     return;
   }
 
+  // Handle Sector "Other"
+  const sectorValue = document.getElementById('sector').value === 'Other' 
+    ? (document.getElementById('sectorOther').value.trim() || 'Other') 
+    : document.getElementById('sector').value;
+
+  // Handle Business Types Multiple Selection & "Other"
+  const selectedBTs = Array.from(document.querySelectorAll('input[name="businessType"]:checked')).map(cb => {
+    return cb.value === 'Other' ? (document.getElementById('businessTypeOther').value.trim() || 'Other') : cb.value;
+  });
+
   const payload = {
     enumeratorId: currentEnumerator?.id || '',
     enumeratorName: currentEnumerator?.volunteer || '',
     ownerName: document.getElementById('ownerName').value,
     phone: document.getElementById('phone').value,
     businessName: document.getElementById('businessName').value,
-    businessType: document.getElementById('businessType').value,
+    sector: sectorValue,
+    businessType: selectedBTs.join(', '), // Joins multiple selections with comma for the sheet
+    businessActivities: document.getElementById('businessActivities').value,
     location: document.getElementById('location').value,
     landmark: document.getElementById('landmark').value,
     streetName: document.getElementById('streetName').value,
@@ -659,8 +851,8 @@ document.getElementById('vform').addEventListener('submit', async function(e){
   const labels = {
     enumeratorId:'Enumerator ID', enumeratorName:'Enumerator Name',
     ownerName:'Owner name', phone:'Phone', businessName:'Business name',
-    businessType:'Business type', location:'Location', landmark:'Landmark',
-    streetName:'Street', region:'Region',
+    sector:'Sector', businessType:'Business Types', businessActivities:'Business Activities',
+    location:'Location', landmark:'Landmark', streetName:'Street', region:'Region',
     district:'District', verificationStatus:'Status', observations:'Observations',
     requestedDate:'Requested', completedDate:'Completed'
   };
@@ -671,7 +863,7 @@ document.getElementById('vform').addEventListener('submit', async function(e){
   });
 
   document.getElementById('overlayTitle').textContent = 'Submitting…';
-  document.getElementById('overlaySub').textContent = 'Sending your report to the Google Sheet.';
+  document.getElementById('overlaySub').textContent = 'Sending your responses to the Google Sheet.';
   document.getElementById('overlay').classList.add('show');
   
   const submitBtn = document.querySelector('button.submit');
@@ -692,6 +884,9 @@ document.getElementById('vform').addEventListener('submit', async function(e){
       renderPhotos();
       document.getElementById('district').innerHTML = '<option value="" disabled selected>Select region first</option>';
       document.getElementById('district').disabled = true;
+      document.getElementById('businessTypesContainer').style.display = 'none';
+      document.getElementById('sectorOtherInput').classList.remove('show');
+      document.getElementById('businessTypeOtherInput').classList.remove('show');
       clearDraft();
     } else {
       throw new Error(result.message || 'Unknown error');
@@ -701,7 +896,7 @@ document.getElementById('vform').addEventListener('submit', async function(e){
     document.getElementById('overlaySub').textContent = err.message + ' — your entries are still filled in, just retry.';
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit Report';
+    submitBtn.textContent = 'Submit Form';
   }
 });
 
